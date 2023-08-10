@@ -1,23 +1,38 @@
 import gradio as gr
+import random
+import time
 import openai
 
-# Set up your OpenAI API credentials
-openai.api_key = "ENTER OPENAI API"
+# Set up OpenAI GPT-3.5 credentials
+openai.api_key = "YOUR_OPENAI_API_KEY"
 
-# Define the OpenAI engine
-ENGINE_NAME = "text-davinci-003"
+with gr.Blocks() as demo:
+    chatbot = gr.Chatbot()
+    msg = gr.Textbox()
+    clear = gr.Button("Clear")
 
-# Define the function for generating a response
-def generate_response(text):
-    response = openai.Completion.create(engine=ENGINE_NAME, prompt=text, max_tokens=50, temperature=0.6, top_p=1.0, n=1, stop=None, timeout=10)
-    return response.choices[0].text.strip()
+    def user(user_message, history):
+        return "", history + [[user_message, None]]
 
-# Create a Gradio interface
-def chatbot(input_text):
-    response = generate_response(input_text)
-    return response
+    def bot(history):
+        user_message = history[-1][0]
+        prompt = "User: " + user_message + "\nBot:"
+        response = openai.Completion.create(
+            engine="text-davinci-003",  # You can use other engines as well
+            prompt=prompt,
+            max_tokens=50
+        )
+        bot_message = response.choices[0].text.strip()
+        history[-1][1] = ""
+        for character in bot_message:
+            history[-1][1] += character
+            time.sleep(0.05)
+            yield history
 
-inputs = gr.inputs.Textbox(lines=2, placeholder="Enter your message here...")
-outputs = gr.outputs.Textbox()
-
-gr.Interface(fn=chatbot, inputs=inputs, outputs=outputs, title="Chatbot", height=400, width=800).launch()
+    msg.submit(user, [msg, chatbot], [msg, chatbot], queue=False).then(
+        bot, chatbot, chatbot
+    )
+    clear.click(lambda: None, None, chatbot, queue=False)
+    
+demo.queue()
+demo.launch()
