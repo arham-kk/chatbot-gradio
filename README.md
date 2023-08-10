@@ -2,10 +2,7 @@
 
 This project implements a chatbot using Gradio and OpenAI's text-davinci-003 model. The chatbot can generate responses to user input based on the trained model.
 
-
-https://github.com/arham-kk/chatbot-gradio/assets/108623726/ddb84b65-4f5f-4e7b-8c08-c4ccf3ad8bf7
-
-
+https://github.com/arham-kk/chatbot-gradio/assets/108623726/3b33dd34-91de-40b8-ac29-041eced0eee1
 
 # Usage
 
